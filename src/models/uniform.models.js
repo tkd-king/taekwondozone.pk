@@ -42,7 +42,15 @@ const uniformSchema = new mongoose.Schema({
     // required: true,
     default: "Full Slieve"
   },
-
+  uniformNumberFormat: {
+    type: String,
+  },
+neckStyle: {
+  type: String,
+},
+poomseOrNot: {
+  type: String,
+}
 
 });
 
