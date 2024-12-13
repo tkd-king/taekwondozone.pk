@@ -38,7 +38,7 @@ const deleteImageMiddleware = asyncHandler(async (req, _, next) => {
             }
         }
 
-        // Proceed to next middleware after deletion
+        // Proceed to next middleware after deletion :)
         next();
 
     } catch (error) {

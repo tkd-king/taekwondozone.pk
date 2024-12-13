@@ -6,14 +6,14 @@ import { Uniform } from "../models/uniform.models.js";
 const CreateUniformObject = asyncHandler(async (req, res) => {
   try {
     const {
-      name = "",
-      company = "",
-      size = "",
-      category = "A",
-      upperColor = "White",
-      trowserColor = "White",
-      seneiority = "Pumdown",
-      style = "Full Slieve",
+      name = " ",
+      company = " ",
+      size = " ",
+      category = " ",
+      upperColor = " ",
+      trowserColor = " ",
+      seneiority = " ",
+      style = " ",
       uniformNumberFormat = " ",
       neckStyle = " ",
       poomseOrNot = " ",
@@ -22,30 +22,38 @@ const CreateUniformObject = asyncHandler(async (req, res) => {
     if (req.file) {
       imageUrl = req.file.path;
     }
-
-    const newUniform = new Uniform({
-      name,
-      company,
-      size,
-      category,
-      imageUrl,
-      upperColor,
-      trowserColor,
-      seneiority,
-      style,
-      uniformNumberFormat,
-      neckStyle,
-      poomseOrNot,
-      //add all keys of object here... agter enter in modle
-    });
-    console.log("New Uniform :: here... ", newUniform);
-
-    await newUniform.save();
+    
+    const uniforms = await Uniform.findOne({ uniformNumberFormat: uniformNumberFormat }); // check if product already exists
+    if( uniforms ){
+      return res.status(400).json(new ApiError(400, "This Product Already Exists !"))
+    } else{
+      const newUniform = new Uniform({
+        name,
+        company,
+        size,
+        category,
+        imageUrl,
+        upperColor,
+        trowserColor,
+        seneiority,
+        style,
+        uniformNumberFormat,
+        neckStyle,
+        poomseOrNot,
+        //add all keys of object here... agter enter in modle
+      });
+      
+      await newUniform.save();
+    }
+    
+   
+    // console.log("New Uniform :: here... ", newUniform);
+    
     // console.log(name, company, size, category,color,upperColor, trowserColor, seneiority );
-
     return res
-      .status(201)
-      .json(new ApiResponse(200, newUniform, "uniform created successfully"));
+    .status(201)
+    .json(new ApiResponse(200, newUniform, "uniform created successfully"));
+    
   } catch (error) {
     console.error("Error while creating uniform:", error);
     throw new ApiError(400, "Please fill in valid inputs for uniform creation");
@@ -53,8 +61,40 @@ const CreateUniformObject = asyncHandler(async (req, res) => {
 });
 const getAllUniforms = asyncHandler(async (req, res) => {
   try {
-    const uniforms = await Uniform.find();
-    res.status(200).json(uniforms);
+    const page = parseInt(req.query.page) || 1; // Current page (default: 1)
+    const limit = parseInt(req.query.limit) || 10; // Items per page (default: 10)
+    const skip = (page - 1) * limit; // Calculate the number of items to skip
+    // Filters from query parameters
+    const {
+      company,
+      size,
+      upperColor,
+      trowserColor,
+      seneiority,
+      category,
+      uniformNumberFormat,
+    } = req.query;
+
+    // Build dynamic filter object
+    const filter = {};
+    if (company) filter.company = { $regex: company, $options: "i" }; // Case-insensitive search
+    if (size) filter.size = size;
+    if (upperColor) filter.upperColor = upperColor;
+    if (trowserColor) filter.trowserColor = trowserColor;
+    if (seneiority) filter.seneiority = seneiority;
+    if (category) filter.category = category;
+    if (uniformNumberFormat) filter.uniformNumberFormat = uniformNumberFormat;
+
+    // Apply filter and pagination
+    const totalUniforms = await Uniform.countDocuments(filter); // Total number of filtered items
+    const uniforms = await Uniform.find(filter).skip(skip).limit(limit); // Fetch filtered, paginated data
+
+    res.status(200).json({
+      uniforms, // Data for the current page
+      currentPage: page,
+      totalPages: Math.ceil(totalUniforms / limit),
+      totalUniforms, // Total number of items
+    });
   } catch (error) {
     throw new ApiError(404, "not found any unifom here ...");
   }
@@ -85,7 +125,7 @@ const updatedUniform = asyncHandler(async (req, res) => {
       neckStyle: req.body.neckStyle,
       poomseOrNot: req.body.poomseOrNot,
       uniformNumberFormat: req.body.uniformNumberFormat,
-      //all keys enter here... after declare keys in object
+      //all keys enter here... after declare keys in object modle
       imageUrl: req.file ? req.file.path : req.body.imageUrl, // Handle image update
     };
 
