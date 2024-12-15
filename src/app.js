@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from "cors"
 
+
 dotenv.config();
 
 const app = express();
@@ -19,5 +20,6 @@ import userRouter from "../src/routes/user.route.js"
 // Declare routes
 app.use("/api/v1/uniforms", uniformRouter)
 app.use("/api/v1/auth", userRouter )
+app.get("/health", (req, res) => res.send("page is running"))
 
 export {app}
