@@ -24,8 +24,5 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.4",
     "railway": "^2.0.17"
-  },
-  "engines": {
-    "node": "16.x"
   }
 }
