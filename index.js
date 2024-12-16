@@ -10,7 +10,7 @@ dotenv.config({
 })
 
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, 'out')));
+app.use(express.static(path.join(__dirname, '/out')));
 
 connectDb()
 .then(()=>{
