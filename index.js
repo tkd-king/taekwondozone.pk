@@ -1,10 +1,16 @@
 import dotenv from "dotenv"
 import connectDb from "./src/db/index.js"
 import { app } from "./src/app.js"
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config({
     path:"./env"
 })
+
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, 'out')));
 
 connectDb()
 .then(()=>{
