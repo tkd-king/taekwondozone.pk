@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Uniform } from "../models/uniform.models.js";
 
 const CreateUniformObject = asyncHandler(async (req, res) => {
+  let newUniform ;
   try {
     const {
       name = " ",
@@ -17,17 +18,17 @@ const CreateUniformObject = asyncHandler(async (req, res) => {
       uniformNumberFormat = " ",
       neckStyle = " ",
       poomseOrNot = " ",
+      imageUrl = "",
     } = req.body;
-    let imageUrl; // Cloudinary se upload ke baad ka image URL
-    if (req.file) {
-      imageUrl = req.file.path;
-    }
-    
+    // let imageUrl; // Cloudinary se upload ke baad ka image URL
+    // if (req.file) {
+    //   imageUrl = req.file.path;
+    // }
     const uniforms = await Uniform.findOne({ uniformNumberFormat: uniformNumberFormat }); // check if product already exists
     if( uniforms ){
       return res.status(400).json(new ApiError(400, "This Product Already Exists !"))
     } else{
-      const newUniform = new Uniform({
+       newUniform = new Uniform({
         name,
         company,
         size,
@@ -44,6 +45,7 @@ const CreateUniformObject = asyncHandler(async (req, res) => {
       });
       
       await newUniform.save();
+      
     }
     
    
