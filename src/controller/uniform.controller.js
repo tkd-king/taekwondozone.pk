@@ -84,12 +84,7 @@ const getAllUniforms = asyncHandler(async (req, res) => {
     if (upperColor) filter.upperColor = upperColor;
     if (trowserColor) filter.trowserColor = trowserColor;
     if (seneiority) filter.seneiority = seneiority;
-    if (category){
-      if (category.trim() == "A+" ) {
-        throw new ApiError(400,"This Uniforms out of stock")
-      } 
-      filter.category = category
-    }
+    if (category) filter.category = category
     if (uniformNumberFormat) filter.uniformNumberFormat = uniformNumberFormat;
 
     // Apply filter and pagination
