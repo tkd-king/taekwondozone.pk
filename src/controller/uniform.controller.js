@@ -75,6 +75,7 @@ const getAllUniforms = asyncHandler(async (req, res) => {
       seneiority,
       category,
       uniformNumberFormat,
+      poomseOrNot
     } = req.query;
 
     // Build dynamic filter object
@@ -86,6 +87,7 @@ const getAllUniforms = asyncHandler(async (req, res) => {
     if (seneiority) filter.seneiority = seneiority;
     if (category) filter.category = category
     if (uniformNumberFormat) filter.uniformNumberFormat = uniformNumberFormat;
+    if (poomseOrNot) filter.poomseOrNot = poomseOrNot;
 
     // Apply filter and pagination
     const totalUniforms = await Uniform.countDocuments(filter); // Total number of filtered items
