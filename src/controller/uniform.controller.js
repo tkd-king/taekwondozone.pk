@@ -3,33 +3,35 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Uniform } from "../models/uniform.models.js";
 
+
 const CreateUniformObject = asyncHandler(async (req, res) => {
   let newUniform ;
   try {
     const {
-      name = " ",
-      company = " ",
-      size = " ",
-      category = " ",
-      upperColor = " ",
-      trowserColor = " ",
-      seneiority = " ",
-      style = " ",
-      uniformNumberFormat = " ",
-      neckStyle = " ",
-      poomseOrNot = " ",
-      imageUrl = "",
+      company,
+      size,
+      category,
+      upperColor,
+      trowserColor,
+      seneiority,
+      style,
+      uniformNumberFormat,
+      neckStyle,
+      poomseOrNot,
+      imageUrl
     } = req.body;
-    // let imageUrl; // Cloudinary se upload ke baad ka image URL
-    // if (req.file) {
-    //   imageUrl = req.file.path;
-    // }
+    if (req.file) {
+        imageUrl = req.file.path;
+    console.log("line::27",imageUrl);
+    }
+    console.log("line::27",imageUrl);
+    
     const uniforms = await Uniform.findOne({ uniformNumberFormat: uniformNumberFormat }); // check if product already exists
     if( uniforms ){
       return res.status(400).json(new ApiError(400, "This Product Already Exists !"))
-    } else{
+    }
+
        newUniform = new Uniform({
-        name,
         company,
         size,
         category,
@@ -43,15 +45,9 @@ const CreateUniformObject = asyncHandler(async (req, res) => {
         poomseOrNot,
         //add all keys of object here... agter enter in modle
       });
-      
       await newUniform.save();
-      
-    }
-    
-   
-    // console.log("New Uniform :: here... ", newUniform);
-    
-    // console.log(name, company, size, category,color,upperColor, trowserColor, seneiority );
+    console.log("New Uniform :: here... ", newUniform);
+    console.log("line::54", company, size, category,color,upperColor, trowserColor, seneiority,imageUrl);
     return res
     .status(201)
     .json(new ApiResponse(200, newUniform, "uniform created successfully"));
@@ -167,6 +163,50 @@ const deleteUniform = asyncHandler(async (req, res) => {
       .json(new ApiError(404, "uniform object byId not found"));
   }
 });
+const soldUniforms = asyncHandler(async(req, res) => {
+ const {productId} = req.body
+ console.log("product id:",productId);
+ 
+  try {
+   const { productId } = req.body;
+   console.log("try block product id:",productId);
+   
+   const uniform = await Uniform.findById(productId);
+   console.log("try block uniform:",uniform);
+   
+   if (!uniform) {
+    return res.status(404).json({ error: "Uniform not found" });
+  }
+ let soldUniform = new Uniform({
+    company:uniform.company,
+    size:uniform.size,
+    category:uniform.category,
+    imageUrl:uniform.imageUrl,
+    upperColor:uniform.upperColor,
+    trowserColor:uniform.trowserColor,
+    seneiority:uniform.seneiority,
+    style:uniform.style,
+    uniformNumberFormat:uniform.uniformNumberFormat,
+    neckStyle:uniform.neckStyle,
+    poomseOrNot:uniform.poomseOrNot,
+    //add all keys of object here... agter enter in modle
+  });
+  
+  await soldUniform.save();
+ console.log("sold uniform here.. line 196 unicont.js",soldUniform);
+ 
+  const deletedItem =  await Uniform.findByIdAndDelete(productId);
+console.log("deleted product uniform controllar line 198",deletedItem);
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, soldUniform, "uniform created successfully"));
+
+
+  } catch (error) {
+    throw new ApiError(500 ,"please refresh internal error")
+  }
+})
 
 export {
   getAllUniforms,
@@ -174,4 +214,5 @@ export {
   findOneUniform,
   updatedUniform,
   deleteUniform,
+  soldUniforms,
 };

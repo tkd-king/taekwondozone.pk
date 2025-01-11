@@ -52,6 +52,6 @@ const uniformSchema = new mongoose.Schema({
   poomseOrNot: {
     type: String,
   },
-});
+},{timestamps:true});
 
 export const Uniform = mongoose.model("Uniform", uniformSchema);
