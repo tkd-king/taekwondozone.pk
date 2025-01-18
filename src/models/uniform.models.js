@@ -9,6 +9,7 @@ const uniformSchema = new mongoose.Schema({
   company: {
     type: String,
     required: true,
+    lowercase: true,
   },
   size: {
     type: String,
@@ -16,41 +17,49 @@ const uniformSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ["A", "A+", "B", "C", "D"],
+    enum: ["a", "a+", "b", "c", "d"],
     required: true,
+    lowercase: true,
   },
   upperColor: {
     type: String,
     // required: true,
     default: "white",
+    lowercase: true,
   },
   trowserColor: {
     type: String,
     // required: true,
     default: "white",
+    lowercase: true,
   },
   seneiority: {
     type: String,
     // required: true,
     default: "Poom",
+    lowercase: true,
   },
   imageUrl: {
     type: String,
     // require: true,
+    lowercase: true,
   },
   style: {
     type: String,
     // required: true,
     default: "Full Slieve",
+    lowercase: true,
   },
   uniformNumberFormat: {
     type: String,
   },
   neckStyle: {
     type: String,
+    lowercase: true,
   },
   poomseOrNot: {
     type: String,
+    lowercase: true,
   },
 },{timestamps:true});
 
