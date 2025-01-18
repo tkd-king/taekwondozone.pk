@@ -23,7 +23,9 @@ const deleteImageMiddleware = asyncHandler(async (req, _, next) => {
 
         // Extract Cloudinary public_id from image URL
         const publicId = `uniforms/${uniform.imageUrl.split('/').pop().split('.')[0]}`;
-                 console.log("publick id::",publicId);
+        console.log("public id::",publicId);
+        // const publicId2 = `testFolder/${uniform.imageUrl.split('/').pop().split('.')[0]}`;
+        // console.log("public id::",publicId2);
  
         // Check if we have a valid publicId
         if (publicId) {

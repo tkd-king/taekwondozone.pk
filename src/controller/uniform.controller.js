@@ -18,8 +18,8 @@ const CreateUniformObject = asyncHandler(async (req, res) => {
       uniformNumberFormat,
       neckStyle,
       poomseOrNot,
-      imageUrl
     } = req.body;
+    let imageUrl="";
     if (req.file) {
         imageUrl = req.file.path;
     console.log("line::27",imageUrl);
@@ -47,7 +47,7 @@ const CreateUniformObject = asyncHandler(async (req, res) => {
       });
       await newUniform.save();
     console.log("New Uniform :: here... ", newUniform);
-    console.log("line::54", company, size, category,color,upperColor, trowserColor, seneiority,imageUrl);
+    console.log("line::54", company, size, category, upperColor, trowserColor, seneiority, imageUrl, style, uniformNumberFormat, neckStyle, poomseOrNot);
     return res
     .status(201)
     .json(new ApiResponse(200, newUniform, "uniform created successfully"));
@@ -117,7 +117,6 @@ const updatedUniform = asyncHandler(async (req, res) => {
       company: req.body.company,
       size: req.body.size,
       category: req.body.category,
-      color: req.body.color,
       upperColor: req.body.upperColor,
       trowserColor: req.body.trowserColor,
       seneiority: req.body.seneiority,
@@ -207,6 +206,46 @@ console.log("deleted product uniform controllar line 198",deletedItem);
     throw new ApiError(500 ,"please refresh internal error")
   }
 })
+const lowercaseAllFields = async (_, res) => {
+  try {
+    const uniforms = await Uniform.find(); // Get all documents from the collection
+
+    for (const uniform of uniforms) {
+      // Iterate through each document
+      const updatedData = {};
+      
+      // Iterate over each field in the document
+      for (const key in uniform._doc) {
+        let one=0 ;
+        
+        
+        if (key === "imageURL") {
+          // Skip `imageURL` field
+          updatedData[key] = uniform[key];
+        } else if (typeof uniform[key] === "string") {
+          // Convert string fields to lowercase
+          updatedData[key] = uniform[key].toLowerCase();
+        } else {
+          // Keep non-string fields as is
+          updatedData[key] = uniform[key];
+        }
+        one++;
+        // Update the document in the database
+        console.log("uniform updated ::",one);
+      }
+      await Uniform.updateOne({ _id: uniform._id }, { $set: updatedData });
+    }
+    console.log("All fields updated to lowercase (except imageURL) successfully!");
+    return res.status(200).json({ message: "All fields updated to lowercase (except imageURL) successfully!" });
+
+  } catch (error) {
+    console.error("Error updating documents:", error.message);
+    throw new ApiError(500, "Error updating documents to lowercase");
+  }
+};
+
+;
+
 
 export {
   getAllUniforms,
@@ -215,4 +254,5 @@ export {
   updatedUniform,
   deleteUniform,
   soldUniforms,
+  lowercaseAllFields
 };
